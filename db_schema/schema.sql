@@ -1,3 +1,13 @@
+-- ===========================================
+-- DROP TABLES (SAFE ORDER)
+-- ===========================================
+DROP TABLE IF EXISTS similar_players;
+DROP TABLE IF EXISTS gk_player_stats;
+DROP TABLE IF EXISTS outfield_player_stats;
+DROP TABLE IF EXISTS player;
+DROP TABLE IF EXISTS team;
+DROP TABLE IF EXISTS league;
+
 -- ================================
 -- League Table
 -- ================================
