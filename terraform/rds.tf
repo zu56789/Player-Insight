@@ -77,11 +77,11 @@ resource "aws_db_instance" "player_insight_db" {
   identifier              = "player-insight-db"
   engine                  = "postgres"
   engine_version          = "17.6"
-  instance_class          = "db.t3.micro"        # free-tier eligible
+  instance_class          = "db.t3.micro"
   allocated_storage       = 20
   max_allocated_storage   = 100
   db_name                 = "player_insight_db"
-  username                = "admin"
+  username                = "player_insight_admin"
   password                = random_password.rds_password.result
   publicly_accessible     = true                
   skip_final_snapshot     = true             
