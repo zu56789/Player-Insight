@@ -16,7 +16,8 @@ CREATE TABLE league (
     league_name TEXT NOT NULL,
     league_country TEXT,
     league_season TEXT,
-    fbref_url TEXT
+    fbref_url TEXT,
+    CONSTRAINT unique_league_season UNIQUE(league_name, league_season)
 );
 
 -- ================================
@@ -26,7 +27,8 @@ CREATE TABLE team (
     team_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     team_name TEXT NOT NULL,
     league_id INTEGER REFERENCES league(league_id),
-    fbref_url TEXT
+    fbref_url TEXT,
+    CONSTRAINT unique_team_league UNIQUE(team_name, league_id)
 );
 
 -- ================================
@@ -43,7 +45,8 @@ CREATE TABLE player (
     player_image TEXT,
     team_id INTEGER REFERENCES team(team_id),
     fbref_url TEXT,
-    last_updated TIMESTAMP DEFAULT NOW()
+    last_updated TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT unique_player_team UNIQUE(player_name, team_id)
 );
 
 -- ================================
