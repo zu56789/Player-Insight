@@ -5,6 +5,9 @@ from bs4 import BeautifulSoup
 def get_league_teams(url: str, league_name: str) -> dict:
     """Function to extract team names and their links from a league page on FBref."""
 
+    if not url or not league_name:
+        raise ValueError("Both url and league_name must be provided")
+
     scraper = cloudscraper.create_scraper()
 
     response = scraper.get(url)
