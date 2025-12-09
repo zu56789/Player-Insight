@@ -3,3 +3,5 @@ requests
 pandas
 boto3
 cloudscraper
+pytest
+pylint
