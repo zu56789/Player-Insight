@@ -4,7 +4,7 @@ def validate_league_name(league_name: str) -> str:
         raise ValueError("League name must be a string.")
     if len(league_name) == 0:
         raise ValueError("League name cannot be empty.")
-    league_name = league_name.replace("Table", "")
+    league_name = league_name.lower().replace("table", "")
     return league_name.strip().title()
 
 
