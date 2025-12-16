@@ -70,4 +70,5 @@ def upload_league_data(conn: connection, league_data: dict) -> bool:
             league_data['league_season'],
             league_data['fbref_url']
         ))
+        conn.commit()
         return True

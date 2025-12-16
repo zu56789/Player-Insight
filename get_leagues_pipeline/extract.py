@@ -22,12 +22,10 @@ def extract_top_five_leagues(url: str) -> list[dict]:
         if not league_country:
             continue
 
-        # The *league link* has a <caption> sibling
         table_link = div.find("a", href=lambda x: x and "/comps/" in x)
 
         caption = None
         if table_link:
-            # try to find caption inside the table wrapper nearby
             caption_tag = div.find_next("caption")
             if caption_tag:
                 caption = caption_tag.get_text(strip=True)
