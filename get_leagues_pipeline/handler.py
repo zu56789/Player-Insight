@@ -7,9 +7,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def run_pipeline():
+def lambda_handler(event, context):
     """Run the ETL pipeline to get, transform, and load league data."""
-    logger.info("Starting the league data pipeline")
+    logger.info("Starting the league data lambda")
     url = "https://fbref.com/en/"
     logger.info("Starting league data extraction from %s", url)
 
@@ -45,9 +45,13 @@ def run_pipeline():
         except Exception as e:
             logger.error("Failed to upload league %s: %s",
                          league['league_name'], e)
+            raise
+
     logger.info(
         "Uploading completed. Total new leagues uploaded: %d", loaded_count)
-
-
-if __name__ == "__main__":
-    run_pipeline()
+    conn.close()
+    return {
+        "status": "SUCCESS",
+        "leagues_processed": len(transformed_league_data),
+        "leagues_inserted": loaded_count
+    }
