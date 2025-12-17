@@ -3,8 +3,24 @@ from bs4 import BeautifulSoup
 
 
 def extract_top_five_leagues(url: str) -> list[dict]:
-    scraper = cloudscraper.create_scraper()
-    response = scraper.get(url)
+    scraper = cloudscraper.create_scraper(
+        browser={
+            "browser": "chrome",
+            "platform": "windows",
+            "desktop": True
+        }
+    )
+
+    headers = {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/120.0.0.0 Safari/537.36"
+        ),
+        "Accept-Language": "en-US,en;q=0.9",
+        "Referer": "https://fbref.com/",
+    }
+    response = scraper.get(url, headers=headers)
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")

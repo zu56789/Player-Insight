@@ -1,4 +1,4 @@
-resource "aws_security_group" get_leagues_lambda_sg {
+resource "aws_security_group" "get_leagues_lambda_sg" {
   name        = "player-insight-get-leagues-lambda-sg"
   description = "Security group for Get Leagues Lambda"
   vpc_id      = data.aws_vpc.default.id
@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "get_leagues_lambda_secrets" {
       Action = [
         "secretsmanager:GetSecretValue"
       ]
-      Resource = data.aws_secretsmanager_secret.player_insight_secret.arn
+      Resource = aws_secretsmanager_secret.player_insight_secret.arn
 
     }]
   })
@@ -68,7 +68,7 @@ resource "aws_lambda_function" "get_leagues_lambda" {
   role          = aws_iam_role.get_leagues_lambda_role.arn
 
   package_type = "Image"
-  image_uri    = "${aws_ecr_repository.get_leagues.repository_url}:latest"
+  image_uri    = "${aws_ecr_repository.get_leagues_repository.repository_url}:latest"
 
   timeout     = 900
   memory_size = 512
