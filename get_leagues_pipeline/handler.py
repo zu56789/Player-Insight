@@ -3,8 +3,9 @@ from extract import extract_top_five_leagues
 from transform import transform_league_data
 from load import get_rds_connection, upload_league_data
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Configure logging
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
