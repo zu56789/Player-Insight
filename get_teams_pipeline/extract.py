@@ -42,7 +42,8 @@ def get_league_teams(url: str) -> list[dict]:
         if team_cell and "/squads/" in team_cell['href']:
             teams.append({
                 "team_name": team_cell.text.strip(),
-                "fbref_link": team_cell['href']
+                "fbref_link": team_cell['href'],
+                "league_name": league_name
             })
         else:
             raise ValueError("Team link not found in the expected format")
