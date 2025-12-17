@@ -38,11 +38,14 @@ def get_league_teams(url: str) -> list[dict]:
 
     for row in tbody.find_all("tr"):
         team_cell = row.find("a")
-        if team_cell:
+        # Ensure it's a team link and not a redirected link
+        if team_cell and "/squads/" in team_cell['href']:
             teams.append({
                 "team_name": team_cell.text.strip(),
                 "fbref_link": team_cell['href']
             })
+        else:
+            raise ValueError("Team link not found in the expected format")
 
     return teams
 
