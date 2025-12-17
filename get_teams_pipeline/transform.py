@@ -22,9 +22,9 @@ def validate_fbref_url(fbref_url: str) -> str:
 def transform_team_data(team_data: dict) -> dict:
     """Transform and validate team data dictionary."""
     team_name = validate_team_name(team_data.get("team_name", ""))
-    fbref_url = validate_fbref_url(team_data.get("fbref_link", ""))
+    fbref_url = validate_fbref_url(team_data.get("fbref_url", ""))
 
     return {
         "team_name": team_name,
-        "fbref_link": fbref_url
+        "fbref_url": fbref_url
     }

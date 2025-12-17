@@ -33,6 +33,24 @@ def get_league_id_for_league(conn: connection, league_name: str) -> int:
                 f"League '{league_name}' not found in the database.")
 
 
+def insert_team_data(conn: connection, team_data: dict) -> bool:
+    """Insert team data into the teams table."""
+    league_id = get_league_id_for_league(conn, team_data["league_name"])
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            INSERT INTO team (team_name, league_id, fbref_url)
+            VALUES (%s, %s, %s);
+            """,
+            (team_data["team_name"],
+             league_id,
+             team_data["fbref_url"])
+        )
+
+    conn.commit()
+    return True
+
+
 if __name__ == "__main__":
     conn = get_rds_connection()
     print("Connection to RDS database established successfully.")

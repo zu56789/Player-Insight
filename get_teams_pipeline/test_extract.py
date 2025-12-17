@@ -19,5 +19,5 @@ def test_get_league_teams_valid():
     assert isinstance(teams, list)
     assert len(teams) > 0
     assert any(team["team_name"] == "Metz" for team in teams)
-    assert any(team["fbref_link"] ==
+    assert any(team["fbref_url"] ==
                "https://fbref.com/en/squads/f83960ae/Metz-Stats" for team in teams)
