@@ -33,6 +33,29 @@ def get_league_id_for_league(conn: connection, league_name: str) -> int:
                 f"League '{league_name}' not found in the database.")
 
 
+def get_league_names(conn: connection) -> list[str]:
+    """Retrieve all league names from the league table."""
+    with conn.cursor() as cursor:
+        cursor.execute("SELECT league_name FROM league;")
+        results = cursor.fetchall()
+        return [row[0] for row in results]
+
+
+def get_fbref_url_for_league(conn: connection, league_name: str) -> str:
+    """Retrieve the fbref URL for a given league name."""
+    with conn.cursor() as cursor:
+        cursor.execute(
+            "SELECT fbref_url FROM league WHERE league_name = %s;",
+            (league_name,)
+        )
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        else:
+            raise ValueError(
+                f"FBRef URL for league '{league_name}' not found in the database.")
+
+
 def insert_team_data(conn: connection, team_data: dict) -> bool:
     """Insert team data into the teams table."""
     league_id = get_league_id_for_league(conn, team_data["league_name"])
@@ -54,8 +77,7 @@ def insert_team_data(conn: connection, team_data: dict) -> bool:
 if __name__ == "__main__":
     conn = get_rds_connection()
     print("Connection to RDS database established successfully.")
-    league_names = ["Premier League", "La Liga",
-                    "Bundesliga", "Serie A", "Ligue 1"]
+    league_names = get_league_names(conn)
     for league_name in league_names:
 
         try:

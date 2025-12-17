@@ -26,10 +26,12 @@ def test_validate_fbref_url():
 def test_transform_team_data():
     raw_data = {
         "team_name": " manchester united ",
-        "fbref_url": "/en/squads/19538871/Manchester-United-Stats"
+        "fbref_url": "/en/squads/19538871/Manchester-United-Stats",
+        "league_name": "Premier League"
     }
     transformed = transform_team_data(raw_data)
     assert transformed == {
         "team_name": "Manchester United",
-        "fbref_url": "https://fbref.com/en/squads/19538871/Manchester-United-Stats"
+        "fbref_url": "https://fbref.com/en/squads/19538871/Manchester-United-Stats",
+        "league_name": "Premier League"
     }

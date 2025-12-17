@@ -23,8 +23,13 @@ def transform_team_data(team_data: dict) -> dict:
     """Transform and validate team data dictionary."""
     team_name = validate_team_name(team_data.get("team_name", ""))
     fbref_url = validate_fbref_url(team_data.get("fbref_url", ""))
+    league_name = team_data.get("league_name", "")
+
+    if not league_name:
+        raise ValueError("League name is required")
 
     return {
         "team_name": team_name,
-        "fbref_url": fbref_url
+        "fbref_url": fbref_url,
+        "league_name": league_name
     }
