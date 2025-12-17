@@ -59,19 +59,22 @@ def get_fbref_url_for_league(conn: connection, league_name: str) -> str:
 def insert_team_data(conn: connection, team_data: dict) -> bool:
     """Insert team data into the teams table."""
     league_id = get_league_id_for_league(conn, team_data["league_name"])
-    with conn.cursor() as cursor:
-        cursor.execute(
-            """
-            INSERT INTO team (team_name, league_id, fbref_url)
-            VALUES (%s, %s, %s);
-            """,
-            (team_data["team_name"],
-             league_id,
-             team_data["fbref_url"])
-        )
-
-    conn.commit()
-    return True
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO team (team_name, league_id, fbref_url)
+                VALUES (%s, %s, %s);
+                """,
+                (team_data["team_name"],
+                 league_id,
+                 team_data["fbref_url"])
+            )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        raise e
 
 
 if __name__ == "__main__":
