@@ -5,3 +5,7 @@ output "db_endpoint" {
 output "secret_arn" {
   value = aws_secretsmanager_secret.player_insight_secret.arn
 }
+
+output "get_leagues_ecr_repository_url" {
+  value = aws_ecr_repository.get_leagues_repository.repository_url
+}
