@@ -75,11 +75,11 @@ resource "aws_lambda_function" "get_leagues_lambda" {
 
   environment {
     variables = {
-      DB_NAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_NAME"]
-      DB_USERNAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_USERNAME"]
-      DB_PASSWORD = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_PASSWORD"]
-      DB_HOST = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_HOST"]
-      FIRECRAWL_API_KEY = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["FIRECRAWL_API_KEY"]
+      DB_NAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret_value.secret_string)["DB_NAME"]
+      DB_USERNAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret_value.secret_string)["DB_USERNAME"]
+      DB_PASSWORD = jsondecode(aws_secretsmanager_secret_version.player_insight_secret_value.secret_string)["DB_PASSWORD"]
+      DB_HOST = jsondecode(aws_secretsmanager_secret_version.player_insight_secret_value.secret_string)["DB_HOST"]
+      FIRECRAWL_API_KEY = jsondecode(aws_secretsmanager_secret_version.player_insight_secret_value.secret_string)["FIRECRAWL_API_KEY"]
     }
   }
 
