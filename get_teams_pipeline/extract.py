@@ -2,11 +2,11 @@ import cloudscraper
 from bs4 import BeautifulSoup
 
 
-def get_league_teams(url: str, league_name: str) -> dict:
+def get_league_teams(url: str) -> dict:
     """Function to extract team names and their links from a league page on FBref."""
 
-    if not url or not league_name:
-        raise ValueError("Both url and league_name must be provided")
+    if not url:
+        raise ValueError("URL must be provided")
 
     scraper = cloudscraper.create_scraper()
 
@@ -15,8 +15,16 @@ def get_league_teams(url: str, league_name: str) -> dict:
 
     soup = BeautifulSoup(response.text, "html.parser")
 
-    table = soup.find(
-        "caption", string=f"{league_name} Table").find_parent("table")
+    # Find the caption that contains the league name followed by " Table"
+    caption = soup.find(
+        "caption", string=lambda text: text and text.endswith("Table"))
+
+    if not caption:
+        raise ValueError("Could not find the teams table caption")
+
+    league_name = caption.get_text(strip=True).replace(" Table", "").title()
+
+    table = caption.find_parent("table")
     if not table:
         raise ValueError(f"Could not find the teams table for {league_name}")
 
@@ -33,8 +41,7 @@ def get_league_teams(url: str, league_name: str) -> dict:
 
 
 if __name__ == "__main__":
-    url = "https://fbref.com/en/comps/13/2025-2026-Ligue-1-Stats"
-    league_name = "Ligue 1"
-    teams = get_league_teams(url, league_name)
+    url = "https://fbref.com/en/comps/13/Ligue-1-Stats"
+    teams = get_league_teams(url)
     for team, link in teams.items():
         print(f"{team}: {link}")
