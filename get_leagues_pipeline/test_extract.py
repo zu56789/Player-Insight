@@ -4,17 +4,15 @@ from extract import extract_top_five_leagues
 
 
 def test_extract_top_five_leagues_invalid_url():
-    with pytest.raises(HTTPError):
-        url = "https://fbref.com/en/invalidpage"
-        leagues = extract_top_five_leagues(url)
-        assert leagues == []
+    url = "https://fbref.com/en/invalidpage"
+    leagues = extract_top_five_leagues(url)
+    assert leagues == []
 
 
 def test_extract_top_five_leagues_no_leagues_section():
-    with pytest.raises(HTTPError):
-        url = "https://fbref.com/en/somepagewithoutleaguesection"
-        leagues = extract_top_five_leagues(url)
-        assert leagues == []
+    url = "https://fbref.com/en/somepagewithoutleaguesection"
+    leagues = extract_top_five_leagues(url)
+    assert leagues == []
 
 
 def test_extract_top_five_leagues_success():

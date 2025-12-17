@@ -6,3 +6,4 @@ cloudscraper
 pytest
 pylint
 psycopg2-binary
+firecrawl-py

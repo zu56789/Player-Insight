@@ -1,29 +1,22 @@
-import cloudscraper
+import os
+from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from firecrawl import Firecrawl
+
+load_dotenv()  # Load environment variables from .env file
+FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
 
 
 def extract_top_five_leagues(url: str) -> list[dict]:
-    scraper = cloudscraper.create_scraper(
-        browser={
-            "browser": "chrome",
-            "platform": "windows",
-            "desktop": True
-        }
-    )
+    """Extract the top five football leagues from the given URL."""
 
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/120.0.0.0 Safari/537.36"
-        ),
-        "Accept-Language": "en-US,en;q=0.9",
-        "Referer": "https://fbref.com/",
-    }
-    response = scraper.get(url, headers=headers)
-    response.raise_for_status()
+    firecrawl = Firecrawl(api_key=FIRECRAWL_API_KEY)
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    # Scrape the page using Firecrawl
+    scrape_result = firecrawl.scrape(url, formats=["html"])
+    html_content = scrape_result.html
+
+    soup = BeautifulSoup(html_content, "html.parser")
 
     leagues_primary = soup.find(id="leagues_primary")
     if not leagues_primary:
@@ -52,7 +45,7 @@ def extract_top_five_leagues(url: str) -> list[dict]:
 
                 results.append({
                     "league_name": caption,
-                    "fbref_url": "https://fbref.com" + table_link["href"],
+                    "fbref_url": table_link["href"],
                     "league_country": league_country.get_text(strip=True),
                     "league_season": table_link.get_text(strip=True)[:9].strip()
                 })
