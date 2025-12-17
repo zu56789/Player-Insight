@@ -4,13 +4,12 @@ from bs4 import BeautifulSoup
 from firecrawl import Firecrawl
 
 load_dotenv()  # Load environment variables from .env file
-FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
 
 
 def extract_top_five_leagues(url: str) -> list[dict]:
     """Extract the top five football leagues from the given URL."""
 
-    firecrawl = Firecrawl(api_key=FIRECRAWL_API_KEY)
+    firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
     # Scrape the page using Firecrawl
     scrape_result = firecrawl.scrape(url, formats=["html"])

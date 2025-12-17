@@ -5,20 +5,15 @@ from psycopg2.extensions import connection
 
 load_dotenv()  # Load environment variables from .env file
 
-DB_NAME = os.getenv("DB_NAME")
-DB_USERNAME = os.getenv("DB_USERNAME")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-
 
 def get_rds_connection() -> connection:
     """Establish a connection to the PostgreSQL RDS database."""
 
     conn = connect(
-        database=DB_NAME,
-        user=DB_USERNAME,
-        password=DB_PASSWORD,
-        host=DB_HOST
+        database=os.getenv("DB_NAME"),
+        user=os.getenv("DB_USERNAME"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST")
     )
     return conn
 

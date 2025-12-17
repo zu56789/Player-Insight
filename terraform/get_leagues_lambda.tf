@@ -73,6 +73,16 @@ resource "aws_lambda_function" "get_leagues_lambda" {
   timeout     = 900
   memory_size = 512
 
+  environment {
+    variables = {
+      DB_NAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_NAME"]
+      DB_USERNAME = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_USERNAME"]
+      DB_PASSWORD = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_PASSWORD"]
+      DB_HOST = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["DB_HOST"]
+      FIRECRAWL_API_KEY = jsondecode(aws_secretsmanager_secret_version.player_insight_secret.secret_string)["FIRECRAWL_API_KEY"]
+    }
+  }
+
   depends_on = [
     aws_cloudwatch_log_group.get_leagues_lambda,
     aws_iam_role_policy_attachment.get_leagues_lambda_logs,
