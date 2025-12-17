@@ -1,19 +1,24 @@
-import cloudscraper
+import os
+from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from firecrawl import Firecrawl
+
+load_dotenv()  # Load environment variables from .env file
 
 
-def get_league_teams(url: str) -> dict:
+def get_league_teams(url: str) -> list[dict]:
     """Function to extract team names and their links from a league page on FBref."""
+
+    firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
     if not url:
         raise ValueError("URL must be provided")
 
-    scraper = cloudscraper.create_scraper()
+    # Scrape the page using Firecrawl
+    scrape_result = firecrawl.scrape(url, formats=["html"])
+    html_content = scrape_result.html
 
-    response = scraper.get(url)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.text, "html.parser")
+    soup = BeautifulSoup(html_content, "html.parser")
 
     # Find the caption that contains the league name followed by " Table"
     caption = soup.find(
@@ -28,14 +33,16 @@ def get_league_teams(url: str) -> dict:
     if not table:
         raise ValueError(f"Could not find the teams table for {league_name}")
 
-    teams = {}
+    teams = []
     tbody = table.find("tbody")
 
     for row in tbody.find_all("tr"):
         team_cell = row.find("a")
         if team_cell:
-            teams[team_cell.text.strip()] = "https://fbref.com" + \
-                team_cell['href']
+            teams.append({
+                "team_name": team_cell.text.strip(),
+                "fbref_link": team_cell['href']
+            })
 
     return teams
 
@@ -43,5 +50,5 @@ def get_league_teams(url: str) -> dict:
 if __name__ == "__main__":
     url = "https://fbref.com/en/comps/13/Ligue-1-Stats"
     teams = get_league_teams(url)
-    for team, link in teams.items():
-        print(f"{team}: {link}")
+    for team in teams:
+        print(team)
