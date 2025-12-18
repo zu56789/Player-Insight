@@ -9,3 +9,7 @@ output "secret_arn" {
 output "get_leagues_ecr_repository_url" {
   value = aws_ecr_repository.get_leagues_repository.repository_url
 }
+
+output "get_teams_ecr_repository_url" {
+  value = aws_ecr_repository.get_teams_repository.repository_url
+}
