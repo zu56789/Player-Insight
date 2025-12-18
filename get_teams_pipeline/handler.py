@@ -4,10 +4,8 @@ from transform import transform_team_data
 from load import get_rds_connection, insert_team_data, get_fbref_url_for_league, get_league_names
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
 def lambda_handler(event, context):
