@@ -1,40 +1,58 @@
-import cloudscraper
+import os
+from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from firecrawl import Firecrawl
+
+load_dotenv()  # Load environment variables from .env file
 
 
-def get_league_teams(url: str, league_name: str) -> dict:
+def get_league_teams(url: str) -> list[dict]:
     """Function to extract team names and their links from a league page on FBref."""
 
-    if not url or not league_name:
-        raise ValueError("Both url and league_name must be provided")
+    firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
-    scraper = cloudscraper.create_scraper()
+    if not url:
+        raise ValueError("URL must be provided")
 
-    response = scraper.get(url)
-    response.raise_for_status()
+    # Scrape the page using Firecrawl
+    scrape_result = firecrawl.scrape(url, formats=["html"])
+    html_content = scrape_result.html
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    soup = BeautifulSoup(html_content, "html.parser")
 
-    table = soup.find(
-        "caption", string=f"{league_name} Table").find_parent("table")
+    # Find the caption that contains the league name followed by " Table"
+    caption = soup.find(
+        "caption", string=lambda text: text and text.endswith("Table"))
+
+    if not caption:
+        raise ValueError("Could not find the teams table caption")
+
+    league_name = caption.get_text(strip=True).replace(" Table", "").title()
+
+    table = caption.find_parent("table")
     if not table:
         raise ValueError(f"Could not find the teams table for {league_name}")
 
-    teams = {}
+    teams = []
     tbody = table.find("tbody")
 
     for row in tbody.find_all("tr"):
         team_cell = row.find("a")
-        if team_cell:
-            teams[team_cell.text.strip()] = "https://fbref.com" + \
-                team_cell['href']
+        # Ensure it's a team link and not a redirected link
+        if team_cell and "/squads/" in team_cell['href']:
+            teams.append({
+                "team_name": team_cell.text.strip(),
+                "fbref_url": team_cell['href'],
+                "league_name": league_name
+            })
+        else:
+            raise ValueError("Team link not found in the expected format")
 
     return teams
 
 
 if __name__ == "__main__":
-    url = "https://fbref.com/en/comps/13/2025-2026-Ligue-1-Stats"
-    league_name = "Ligue 1"
-    teams = get_league_teams(url, league_name)
-    for team, link in teams.items():
-        print(f"{team}: {link}")
+    url = "https://fbref.com/en/comps/13/Ligue-1-Stats"
+    teams = get_league_teams(url)
+    for team in teams:
+        print(team)
