@@ -3,8 +3,18 @@ import time
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from firecrawl import Firecrawl
+from firecrawl.v2.utils.error_handler import RateLimitError
 
 load_dotenv()
+
+
+def safe_scrape(firecrawl, url):
+    while True:
+        try:
+            return firecrawl.scrape(url, formats=["html"])
+        except RateLimitError as e:
+            print("Rate limited, sleeping 30 seconds...")
+            time.sleep(30)
 
 
 def get_team_players(url: str) -> list[dict]:
@@ -19,7 +29,7 @@ def get_team_players(url: str) -> list[dict]:
     firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
     # Scrape page
-    scrape_result = firecrawl.scrape(url, formats=["html"])
+    scrape_result = safe_scrape(firecrawl, url)
     html_content = scrape_result.html
 
     soup = BeautifulSoup(html_content, "html.parser")
@@ -61,7 +71,7 @@ def get_player_details(player_name: str, url: str) -> dict:
 
     firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
-    scrape_result = firecrawl.scrape(url, formats=["html"])
+    scrape_result = safe_scrape(firecrawl, url)
     html_content = scrape_result.html
 
     soup = BeautifulSoup(html_content, "html.parser")
@@ -115,7 +125,7 @@ if __name__ == "__main__":
     )
 
     if players:
-        for player in players[:1]:
+        for player in players[:11]:
 
             details = get_player_details(
                 player["player_name"], player["fbref_url"]
