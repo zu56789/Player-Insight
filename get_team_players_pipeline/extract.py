@@ -13,11 +13,11 @@ def safe_scrape(firecrawl, url):
         try:
             return firecrawl.scrape(url, formats=["html"])
         except RateLimitError as e:
-            print("Rate limited, sleeping 30 seconds...")
-            time.sleep(30)
+            print("Rate limited, sleeping 40 seconds...")
+            time.sleep(40)
 
 
-def get_team_players(url: str) -> list[dict]:
+def get_team_players(team_name: str, url: str) -> list[dict]:
     """
     Extract players from an FBref league page.
     Returns player name + link to player page.
@@ -28,7 +28,6 @@ def get_team_players(url: str) -> list[dict]:
 
     firecrawl = Firecrawl(api_key=os.getenv("FIRECRAWL_API_KEY"))
 
-    # Scrape page
     scrape_result = safe_scrape(firecrawl, url)
     html_content = scrape_result.html
 
@@ -36,7 +35,6 @@ def get_team_players(url: str) -> list[dict]:
 
     players = []
 
-    # Find the main stats table body
     table = soup.find("table", id="stats_standard_9")
     if not table:
         return players
@@ -45,7 +43,6 @@ def get_team_players(url: str) -> list[dict]:
     if not tbody:
         return players
 
-    # Loop through each player row
     for row in tbody.find_all("tr"):
         player_cell = row.find("th", {"data-stat": "player"})
         if not player_cell:
@@ -57,13 +54,14 @@ def get_team_players(url: str) -> list[dict]:
 
         players.append({
             "player_name": player_link.get_text(strip=True),
+            "team_name": team_name,
             "fbref_url": player_link["href"]
         })
 
     return players
 
 
-def get_player_details(player_name: str, url: str) -> dict:
+def get_player_details(player_name: str, team_name: str, url: str) -> dict:
     """Extract player information from an FBref player page."""
 
     if not url:
@@ -83,11 +81,13 @@ def get_player_details(player_name: str, url: str) -> dict:
     player_data = {
         "player_name": player_name,
         "player_position": "Unknown",
-        "player_strong_foot": "Unknown",
-        "player_height": "Unknown",
+        "player_nationality": "Unknown",
         "player_dob": "Unknown",
-        "fbref_url": url,
-        "player_nationality": "Unknown"
+        "player_height": "Unknown",
+        "player_strong_foot": "Unknown",
+        "team_name": team_name,
+        "fbref_url": url
+
     }
 
     for p in info_div.find_all("p"):
@@ -103,7 +103,6 @@ def get_player_details(player_name: str, url: str) -> dict:
                 player_data["player_strong_foot"] = strong.next_sibling.strip()
 
             if "National" in label:
-                # the text of the a link is the name of the country
                 country_link = p.find("a").get_text(strip=True)
                 player_data["player_nationality"] = country_link
 
@@ -121,13 +120,13 @@ def get_player_details(player_name: str, url: str) -> dict:
 
 if __name__ == "__main__":
     players = get_team_players(
-        "https://fbref.com/en/squads/cff3d9bb/Chelsea-Stats"
+        "Chelsea", "https://fbref.com/en/squads/cff3d9bb/Chelsea-Stats"
     )
 
     if players:
-        for player in players[:11]:
+        for player in players[:5]:
 
             details = get_player_details(
-                player["player_name"], player["fbref_url"]
+                player["player_name"], player["team_name"], player["fbref_url"]
             )
             print(details)
