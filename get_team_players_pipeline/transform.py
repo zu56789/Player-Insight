@@ -29,21 +29,21 @@ def transform_player_details(player_data: dict) -> dict:
             player_height)
 
     return {
-        "player_name": player_data.get("player_name"),
-        "player_position": player_data.get("player_position"),
-        "player_nationality": player_data.get("player_nationality"),
+        "player_name": player_data.get("player_name").strip().title(),
+        "player_position": player_data.get("player_position").strip(),
+        "player_nationality": player_data.get("player_nationality").strip().title(),
         "player_dob": player_dob,
         "player_height": player_height,
-        "player_strong_foot": player_data.get("player_strong_foot"),
-        "team_name": player_data.get("team_name"),
-        "fbref_url": player_data.get("fbref_url")
+        "player_strong_foot": player_data.get("player_strong_foot").strip().title(),
+        "team_name": player_data.get("team_name").strip().title(),
+        "fbref_url": player_data.get("fbref_url").strip()
 
     }
 
 
 if __name__ == "__main__":
-    player = {'player_name': 'Dario Essugo', 'player_position': 'MF', 'player_nationality': 'Portugal', 'player_dob': '2005-03-14',
-              'player_height': 'Unknown', 'player_strong_foot': 'Unknown',
-              'team_name': 'Chelsea', 'fbref_url': 'https://fbref.com/en/players/1e4319ac/Dario-Essugo'}
+    player = {'player_name': 'Benoît Badiashile', 'player_position': 'DF (CB, left)', 'player_nationality': 'France', 'player_dob': '2001-03-26',
+              'player_height': '194', 'player_strong_foot': 'Left',
+              'team_name': 'Chelsea', 'fbref_url': 'https://fbref.com/en/players/06df8256/Benoit-Badiashile'}
     transformed_player = transform_player_details(player)
     print(transformed_player)

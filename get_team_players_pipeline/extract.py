@@ -8,7 +8,7 @@ from firecrawl.v2.utils.error_handler import RateLimitError
 load_dotenv()
 
 
-def safe_scrape(firecrawl, url):
+def safe_scrape(firecrawl: Firecrawl, url: str):
     while True:
         try:
             return firecrawl.scrape(url, formats=["html"])
@@ -124,7 +124,7 @@ if __name__ == "__main__":
     )
 
     if players:
-        for player in players[:5]:
+        for player in players[-10:-9]:
 
             details = get_player_details(
                 player["player_name"], player["team_name"], player["fbref_url"]
