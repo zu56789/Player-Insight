@@ -1,5 +1,6 @@
 import os
 import time
+import re
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
 from firecrawl import Firecrawl
@@ -35,7 +36,7 @@ def get_team_players(team_name: str, url: str) -> list[dict]:
 
     players = []
 
-    table = soup.find("table", id="stats_standard_9")
+    table = soup.find("table", id=re.compile(r"^stats_standard"))
     if not table:
         return players
 
@@ -120,7 +121,7 @@ def get_player_details(player_name: str, team_name: str, url: str) -> dict:
 
 if __name__ == "__main__":
     players = get_team_players(
-        "Chelsea", "https://fbref.com/en/squads/cff3d9bb/Chelsea-Stats"
+        "Espanyol", "https://fbref.com/en/squads/a8661628/Espanyol-Stats"
     )
 
     if players:
