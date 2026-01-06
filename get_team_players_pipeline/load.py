@@ -56,6 +56,32 @@ def get_fbref_url_for_team(conn: connection, team_name: str) -> str:
                 f"FBRef URL for team '{team_name}' not found in the database.")
 
 
+def insert_player_data(conn: connection, player_data: dict) -> bool:
+    team_id = get_team_id_for_team(conn, player_data["team_name"])
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO player (player_name, player_position, player_nationality, player_dob,
+                  player_height, player_strong_foot, team_id, fbref_url)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
+                """,
+                (player_data["team_name"],
+                 player_data["player_position"],
+                 player_data["player_nationality"],
+                 player_data["player_dob"],
+                 player_data["player_height"],
+                 player_data["player_strong_foot"],
+                 team_id,
+                 player_data["fbref_url"])
+            )
+        conn.commit()
+        return True
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+
 if __name__ == "__main__":
     conn = get_rds_connection()
     teams = get_team_names(conn)
