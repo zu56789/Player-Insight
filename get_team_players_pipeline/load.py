@@ -41,6 +41,22 @@ def get_team_names(conn: connection) -> list[str]:
         return [row[0] for row in results]
 
 
+def get_team_names_pl(conn: connection, league_name="Premier League", league_season="2025-2026") -> list[str]:
+    """Retrieve all team names from the pl table."""
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT t.team_name
+            FROM team t
+            JOIN league l ON t.league_id = l.league_id
+            WHERE l.league_name = %s
+            AND l.league_season = %s;
+            """,
+            (league_name, league_season))
+        results = cursor.fetchall()
+        return [row[0] for row in results]
+
+
 def get_fbref_url_for_team(conn: connection, team_name: str) -> str:
     """Retrieve the fbref URL for a given team name."""
     with conn.cursor() as cursor:
@@ -66,7 +82,7 @@ def insert_player_data(conn: connection, player_data: dict) -> bool:
                   player_height, player_strong_foot, team_id, fbref_url)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s);
                 """,
-                (player_data["team_name"],
+                (player_data["player_name"],
                  player_data["player_position"],
                  player_data["player_nationality"],
                  player_data["player_dob"],
@@ -80,6 +96,7 @@ def insert_player_data(conn: connection, player_data: dict) -> bool:
     except Exception as e:
         conn.rollback()
         raise e
+# Add function for updating player info
 
 
 if __name__ == "__main__":
