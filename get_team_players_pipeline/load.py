@@ -96,7 +96,18 @@ def insert_player_data(conn: connection, player_data: dict) -> bool:
     except Exception as e:
         conn.rollback()
         raise e
-# Add function for updating player info
+
+
+def check_if_player_exists(conn: connection, player_name: str, team_name: str) -> bool:
+    """Function used to check if a player already exists in the database"""
+    team_id = get_team_id_for_team(conn, team_name)
+    with conn.cursor() as cursor:
+        cursor.execute(
+            "SELECT * FROM player WHERE player_name = %s AND team_id = %s", (player_name, team_id))
+        result = cursor.fetchone()
+        if result:
+            return True
+        return False
 
 
 if __name__ == "__main__":
