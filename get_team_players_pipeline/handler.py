@@ -77,8 +77,9 @@ def lambda_handler(event, context):
     """Lambda handler for running the entire ETL pipeline for players"""
     logger.info("Starting Pipeline")
     conn = get_rds_connection()
-    # only Chelsea and Real Madrid players due to firecrawl limits on scraping
-    team_names = ["Chelsea", "Real Madrid"]
+    # only Chelsea, Real Madrid and Barcelona players due to firecrawl limits on scraping
+    team_names = ["Chelsea", "Real Madrid",
+                  "Barcelona"]
     logger.info(f"Found {len(team_names)} teams")
     team_to_player_dict = extract_team_players(conn, team_names)
     player_details_list = extract_player_details(team_to_player_dict)
